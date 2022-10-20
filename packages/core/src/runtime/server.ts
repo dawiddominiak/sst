@@ -331,7 +331,7 @@ export class Server {
     // Check if invoked before
     if (!this.isWarm(opts.function.id)) {
       logger.debug("First build...");
-      const results = await Handler.build(opts.function);
+      const results = await Handler.bundle(opts.function);
       if (results && results.length > 0) {
         return {
           type: "failure",

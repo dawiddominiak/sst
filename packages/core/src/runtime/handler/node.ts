@@ -210,30 +210,6 @@ export const NodeHandler: Definition<Bundle> = opts => {
       }
     },
     bundle: async () => {
-      await runBeforeBundling(opts.srcPath, artifact, bundle);
-      await fs.remove(artifact);
-      await fs.mkdirp(artifact);
-
-      let result;
-      try {
-        await esbuild.build({
-          ...config,
-          plugins: plugins ? require(plugins) : undefined,
-          metafile: true,
-        });
-      } catch (e) {
-        throw new Error(
-          "There was a problem transpiling the Lambda handler: " + e
-        );
-      }
-      await fs.writeJSON(path.join(artifact, "package.json"), {
-        type: bundle.format === "esm" ? "module" : "commonjs"
-      });
-
-      await runBeforeInstall(opts.srcPath, artifact, bundle);
-      await installNodeModules(opts.srcPath, artifact, bundle);
-      await runAfterBundling(opts.srcPath, artifact, bundle);
-
       const handler = path
         .join(
           path
@@ -244,6 +220,10 @@ export const NodeHandler: Definition<Bundle> = opts => {
           opts.handler
         )
         .replace(/\\/g, "/");
+      const sourceDir = path.join(opts.root, path.dirname(handler));
+      const destinationDir = path.join(artifact, path.dirname(handler));
+      await fs.copy(sourceDir, destinationDir);
+
       return {
         directory: artifact,
         handler
