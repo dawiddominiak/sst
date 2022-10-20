@@ -332,16 +332,6 @@ export class Server {
     if (!this.isWarm(opts.function.id)) {
       logger.debug("First build...");
       const results = await Handler.bundle(opts.function);
-      if (results && results.length > 0) {
-        return {
-          type: "failure",
-          error: {
-            errorType: "build_failure",
-            errorMessage: `The function ${opts.function.handler} failed to build`,
-            stackTrace: [],
-          },
-        };
-      }
       this.warm[opts.function.id] = true;
       logger.debug("First build finished");
     }

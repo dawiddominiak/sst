@@ -158,7 +158,7 @@ const funcMachine = createMachine<FuncContext, FuncEvents>({
         buildStart: () => Date.now(),
       }),
       invoke: {
-        src: async (ctx) => await ctx.instructions.build?.(),
+        src: async (ctx) => await ctx.instructions.bundle?.(),
         onDone: [
           {
             cond: (ctx) => ctx.dirty,
